@@ -1,10 +1,9 @@
-# main.py
 from base_conocimiento import CONEXIONES
 from busqueda import dijkstra
 
 
 def obtener_estaciones():
-    """Devuelve un conjunto con todas las estaciones conocidas."""
+    """Devuelve un conjunto con todas las estaciones del sistema."""
     estaciones = set()
     for c in CONEXIONES:
         estaciones.add(c["origen"])
@@ -12,44 +11,53 @@ def obtener_estaciones():
     return estaciones
 
 
-def mostrar_estaciones_disponibles(estaciones):
+def mostrar_estaciones(estaciones):
     print("\nEstaciones disponibles:")
-    for nombre in sorted(estaciones):
-        print(f" - {nombre}")
+    for est in sorted(estaciones):
+        print(" -", est)
+
+
+def pedir_estacion(mensaje, estaciones):
+    """Repite hasta que el usuario escriba una estación válida."""
+    while True:
+        est = input(mensaje).strip()
+        if est in estaciones:
+            return est
+        print(f"\n❌ Error: la estación '{est}' no existe.")
+        print("Por favor escriba una estación válida como aparece en la lista:\n")
+        mostrar_estaciones(estaciones)
 
 
 def main():
     estaciones = obtener_estaciones()
 
-    print("=== Sistema inteligente de rutas – TransMilenio G22 ===")
-    mostrar_estaciones_disponibles(estaciones)
-    print()
+    print("\n=== Sistema inteligente de rutas – TransMilenio G22 ===\n")
+    mostrar_estaciones(estaciones)
 
-    origen = input("Ingrese estación de origen (escriba exactamente el nombre): ").strip()
-    destino = input("Ingrese estación de destino (escriba exactamente el nombre): ").strip()
+    # ⬇️ AQUÍ PEDIMOS ORIGEN Y DESTINO
+    while True:
+        origen = pedir_estacion("\nIngrese estación de ORIGEN: ", estaciones)
+        destino = pedir_estacion("Ingrese estación de DESTINO: ", estaciones)
 
-    # 🛑 Validación 1: ¿existe la estación de origen?
-    if origen not in estaciones:
-        print(f"\n❌ Error: la estación '{origen}' no existe en la base de datos.")
-        mostrar_estaciones_disponibles(estaciones)
-        return
+        # 🛑 NUEVO CONDICIONAL: ORIGEN = DESTINO
+        if origen == destino:
+            print("\n❌ Error: la estación de ORIGEN y DESTINO no pueden ser la misma.")
+            print("Por favor verifique la información e intente nuevamente.")
+            continue  # 🔄 vuelve a pedir las estaciones
 
-    # 🛑 Validación 2: ¿existe la estación de destino?
-    if destino not in estaciones:
-        print(f"\n❌ Error: la estación '{destino}' no existe en la base de datos.")
-        mostrar_estaciones_disponibles(estaciones)
-        return
+        # Si llegamos aquí, las estaciones son válidas y diferentes
+        break
 
-    # ✅ Si todo está bien, ahora sí buscamos la mejor ruta
+    # Ejecutar búsqueda SOLO cuando todo está correcto
     costo, ruta = dijkstra(origen, destino)
 
     if ruta:
         print("\n✅ Mejor ruta encontrada:")
         print(" -> ".join(ruta))
-        print(f"⏱  Tiempo total estimado del viaje: {costo} minutos")
-        print(f"🚏  Número total de estaciones en la ruta: {len(ruta)}")
+        print(f"\n⏱  Tiempo estimado: {costo} minutos")
+        print(f"🚏  Número de estaciones: {len(ruta)}")
     else:
-        print("\n⚠ No se encontró ruta entre esas estaciones (aunque ambas existen en la base de datos).")
+        print("\n⚠ No hay ruta disponible entre esas estaciones.")
 
 
 if __name__ == "__main__":
