@@ -1,31 +1,56 @@
-from busqueda import dijkstra
+# main.py
 from base_conocimiento import CONEXIONES
+from busqueda import dijkstra
 
-def listar_estaciones():
+
+def obtener_estaciones():
+    """Devuelve un conjunto con todas las estaciones conocidas."""
     estaciones = set()
     for c in CONEXIONES:
         estaciones.add(c["origen"])
         estaciones.add(c["destino"])
-    return sorted(estaciones)
+    return estaciones
+
+
+def mostrar_estaciones_disponibles(estaciones):
+    print("\nEstaciones disponibles:")
+    for nombre in sorted(estaciones):
+        print(f" - {nombre}")
+
 
 def main():
-    print("=== Sistema inteligente de rutas - TransMilenio G22 ===\n")
-    print("Estaciones disponibles:")
-    for est in listar_estaciones():
-        print(" -", est)
+    estaciones = obtener_estaciones()
 
-    origen = input("\nIngrese estación de origen (copie el nombre tal cual): ").strip()
-    destino = input("Ingrese estación de destino (copie el nombre tal cual): ").strip()
+    print("=== Sistema inteligente de rutas – TransMilenio G22 ===")
+    mostrar_estaciones_disponibles(estaciones)
+    print()
 
+    origen = input("Ingrese estación de origen (escriba exactamente el nombre): ").strip()
+    destino = input("Ingrese estación de destino (escriba exactamente el nombre): ").strip()
+
+    # 🛑 Validación 1: ¿existe la estación de origen?
+    if origen not in estaciones:
+        print(f"\n❌ Error: la estación '{origen}' no existe en la base de datos.")
+        mostrar_estaciones_disponibles(estaciones)
+        return
+
+    # 🛑 Validación 2: ¿existe la estación de destino?
+    if destino not in estaciones:
+        print(f"\n❌ Error: la estación '{destino}' no existe en la base de datos.")
+        mostrar_estaciones_disponibles(estaciones)
+        return
+
+    # ✅ Si todo está bien, ahora sí buscamos la mejor ruta
     costo, ruta = dijkstra(origen, destino)
 
     if ruta:
-        print("\nMejor ruta encontrada:")
+        print("\n✅ Mejor ruta encontrada:")
         print(" -> ".join(ruta))
-        print(f"Tiempo total estimado del viaje: {costo} minutos")
-        print(f"Número total de estaciones en la ruta: {len(ruta)}")
+        print(f"⏱  Tiempo total estimado del viaje: {costo} minutos")
+        print(f"🚏  Número total de estaciones en la ruta: {len(ruta)}")
     else:
-        print("\nNo se encontró ruta entre esas estaciones.")
+        print("\n⚠ No se encontró ruta entre esas estaciones (aunque ambas existen en la base de datos).")
+
 
 if __name__ == "__main__":
     main()
