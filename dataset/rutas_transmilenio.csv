@@ -1,0 +1,6 @@
+origen,destino,hora,dia_semana,lluvia,congestion,num_estaciones,transbordos,tiempo_total_min
+Portal 80,Granja - Carrera 77,7,Lunes,0,alta,5,1,48
+Portal 80,Paloquemao,18,Viernes,1,media,7,1,55
+Calle 72,Av. Jiménez,8,Miercoles,0,alta,6,1,50
+Suba - Av. Boyacá,Minuto de Dios,6,Lunes,1,alta,4,0,42
+Paloquemao,Portal Sur,19,Jueves,0,media,9,2,68
